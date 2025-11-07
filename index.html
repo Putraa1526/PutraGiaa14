@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            color: #8a1c4a;
+        }
+        
+        /* Password Modal */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 182, 193, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.5s ease;
+        }
+        
+        .password-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: bounceIn 1s forwards;
+        }
+        
+        .password-content h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #d81b60;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffb7c5;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .password-input:focus {
+            border-color: #d81b60;
+        }
+        
+        .submit-btn {
+            background: #d81b60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        
+        .submit-btn:hover {
+            background: #b71550;
+            transform: scale(1.05);
+        }
+        
+        /* Welcome Screen */
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffd1dc, #ffb7c5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99;
+            transition: opacity 0.8s ease;
+        }
+        
+        .welcome-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 48px;
+            color: #d81b60;
+            text-align: center;
+            animation: pulse 2s infinite, float 3s ease-in-out infinite;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Main Content */
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            margin-top: 50px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #d81b60;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-3px);
+        }
+        
+        .tab.active {
+            background: white;
+            color: #d81b60;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .content-area {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            min-height: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Love Letter Tab */
+        .letter {
+            padding: 20px;
+            background: #fff5f7;
+            border-radius: 15px;
+            border: 2px dashed #ffb7c5;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .letter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .letter h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            color: #d81b60;
+        }
+        
+        .letter-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .letter.expanded .letter-content {
+            max-height: 10000px;
+        }
+        
+        /* Music Tab */
+        .song {
+            background: #f8e8ee;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .song-icon {
+            font-size: 24px;
+            color: #d81b60;
+        }
+        
+        .song-info h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .song-info p {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        /* Notes Tab */
+        .note {
+            background: #fce4ec;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #d81b60;
+        }
+        
+        /* Gallery Tab */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .gallery-item {
+            border-radius: 10px;
+            overflow: hidden;
+            height: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Decorative Elements */
+        .heart, .teddy-bear {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+        
+        .heart {
+            color: #d81b60;
+            font-size: 24px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .teddy-bear {
+            font-size: 32px;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        /* Animations */
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .welcome-message {
+                font-size: 36px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .tab {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-content">
+            <h2>Masukkan kode rahasianya(clue=nama ta berdua)</h2>
+            <input type="password" class="password-input" id="passwordInput" placeholder="Nama Spesial ta berdua...">
+            <button class="submit-btn" id="submitPassword">Masuk</button>
+        </div>
+    </div>
+    
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <!--<h1 class="welcome-message">Welcome sayang, enjoy yaa hadiahnya</h1>-->
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container" id="mainContent" style="display: none;">
+        <div class="tabs">
+            <button class="tab active" data-tab="love-letter">
+                <span>❤️</span> Surat
+            </button>
+            <button class="tab" data-tab="music">
+                <span>🎵</span> Musik
+            </button>
+            <button class="tab" data-tab="notes">
+                <span>📝</span> Pesan
+            </button>
+            <button class="tab" data-tab="gallery">
+                <span>📸</span> Gallery
+            </button>
+        </div>
+        
+        <div class="content-area">
+            <!-- Love Letter Tab -->
+            <div class="tab-content active" id="love-letter">
+                <h2>Surat Untuk Giaa</h2>
+                <div class="letter" id="loveLetter">
+                    <div class="letter-header">
+                        <h3>Sebuah Surat Untukmu</h3>
+                        <span>👇 Tekan untuk membuka</span>
+                    </div>
+                    <div class="letter-content">
+                        <h2>My lovely Gia</h2>
+                        <p>I Love You I Love You I Love You I Love You I Love You I Love You I Love You I Love You I Love You I Love You I Love YouI Love You I Love You I Love You I Love You I Love You I Love You </p><br>
+                        <!--<p>Akhirnyaa 2 tahun ki pacaran, ini longtext ku yang ke-3 eh ndatau keberapa mi. Nda nyangka ka bisa sampe sini seriuska, bahkan jadian ki saja nda espek ka bakal nu terima ka. Dan sudah banyak juga masalah yang kita berdua alami mulai dari 9/10, Prom queek, ilfeel, cemburu sama ale (cih), sampai masalah yang terjadi pada saat ku tulis ini (yang setengah" ka bicara). Walau banyak masalah yang kita berdua dialami tetap ka sayang sama kau, dan juga senang ka bisa sejauh ini sama kau.</p><br>
+                        <p>Makasihh banget ka karena mau ko jadi pacar ku, dan makasih juga karena udah jadi pacar yang baik, pintar, rajin, cantik, imut, dan lucu (mungkin alay sih nu liat).  Kau perempuan pertama yang nyanyikan ka, yang ku post, first time telfonan juga sama kau, dan kau juga cewe pertama yang ku ajak ngedate walau Cuma di kopken, dan perempuan pertama yang buat ka nangis dan kalo bertanya ko kenapa sering nangis, yaa karena sayang ka sama kauu lah. </p><br>
+                        <p>Maaff klo sering ka buat marah ko nah. lagi usaha ka buat perbaiki diri ku, nu ingat dulu se alay apa ka mulai dari emoji tengkorak, cium, nyengir, love” semua ku pake. Trus setelah emoji lebih alay ka lagi pake “ki”. Dan di sini lama ka sadar, dan kau juga mulai ilfeel ke saya trus disitu nda sadar diri ka bilang alay. Jadi terus menerus ka begitu, sampai akhirnya minta ko “break” sebulan. disitu kaya pusing sekali ka, kupikir terus kenapa nu ajak ka “break”. Terus mulai ka nyadar tapi ngga ku peduli dan bahkan waktu lagi break masih ku chat” ko pake kata kata alay. Tapi setelah break ngga terlalu begitu ma Cuma masih ada sedikit, lama kelamaan mulai ma ngetik normal. Dan pas ku cek chat ta yang sebelum “break”, ditambah itu hari jujur ko ke saya klo pas nu dry text ka itu lagi ilfeel ko. Disitu kaya mau ka perbaiki diri biar nda alay, sampe sekarang nda ku tau mi tapi menurut ku nda se alay dulu dan lebih layak di liat chat nya. Makasii ka juga sama kau karena gara” kau ini normal ketikan ku.</p><br>
+                        <p>Ku saaaaaayaang banget ko asli. Sangking sayangnya sama kau baru seminggu ki nda ketemuan kangen ma, terus juga pas selesai gradu itu pas sampe rumah ka rasanya toh… kaya nda mungkin mka ketemu sama kau karena beda sekolah, terus juga jauh sekolah ta, sama dulu nda bisa ka klo pergi sendirian jadi ku pikir gabakalan ketemuan mki. Tapi setelah setahun nda ketemu akhirnya ketemuan ki juga walau sebentar ji tapi ku rasa seruuu banget klo bareng kau, kek rasanya itu senang banget ka, nda berhenti ka senyum karena first time ku itu + cantik banget giaa nyaa.  Tapi kek kenapa cepat sekali itu jam nya(duh kelilipan jir). Maaf ka juga karena nda bisa ka ajak ko ketemuan di daerah makassar karena nu tau ma, insyaallah itu tahun depan.</p><br>
+                        <p>Kayanya Cuma itu ji yappingan ku, semoga nda sibuk ko dan bisa ki ketemuan nanti tanggal 14 karena penasaran ka mau liat live reaction nyaa. Mencoba ka buat ini se effort mungkin karena tahun lalu nda bisa ka kasih apa” ke kau, karena lagi ilfeel ko juga sama saya. Jadi tahun ini harus ka effort yang pokok nya bisa buat senang ko, yang kali ini beda sama yang gradu karena ini ada desain nya pas gradu Cuma tulisan aja. Semoga senang ko sama hadiah “kecil” ku ini. Dan semoga kedepanya hubungan bisa sampe lama bangett. Atau nanti jodoh ki?? Tapi “siapa yang tau bukan ka tuhan”-gia2025. Intinya harus bagus nah komunikasi ta berdua, jangan sampai marahan ki gara” komunikasi yang tidak bagus. Sekali lagi makasih nah karena mau ko pacaran sama orang kek saya yang pakbal dikit. Makasiii banget ka sama kau, I love you giaa💞💞</p><br>
+                        <br>
+                        <h2>Iyaa btw itu nu lupa kah?, yang ada mau ku kasih kan ko</h2>-->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Music Tab -->
+            <div class="tab-content" id="music">
+                <h2>Lagu yang bisa bikin aku ingat kmu</h2>
+                <div class="song">
+                    <div class="song-icon"><img src="mylove.jpeg" height="130"></div>
+                    <div class="song-info">
+                        <h4>My love mine all mine</h4>
+                        <p>by Mitski</p><br>
+                        <p>Alasan : Lagu ini yang pertama kali nu jadikan story ig(yang 9/10)</p>
+                        <audio controls loop>
+                            <source src="My_love.mp3" type="audio/mpeg" />
+                    </div>
+                </div>
+                <div class="song">
+                    <div class="song-icon"><img src="best.jpeg" height="130"></div>
+                    <div class="song-info">
+                        <h4>Best Part</h4>
+                        <p>by H.E.R & Daniel Caesar</p><br>
+                        <p>Alasan : Lagu pertama yang kupelajari, karena nu suruh ka</p>
+                        <audio controls loop>
+                            <source src="Best_part.mp3" type="audio/mpeg" />
+                        </audio>
+                    </div>
+                </div>
+                <div class="song">
+                    <div class="song-icon"><img src="prom.jpeg" height="130"></div>
+                    <div class="song-info">
+                        <h4>Prom eek</h4>
+                        <p>Beach Bunny</p><br>
+                        <p>Alasan : Ini lagu personal ka, gegara na kasih bertengkar ki</p>
+                        <audio controls loop>
+                            <source src="PromQueen.mp3" type="audio/mpeg" />
+                        </audio>
+                    </div>
+                </div>
+                <div class="song">
+                    <div class="song-icon"><img src="until.jpeg" height="130" width="130"></div>
+                    <div class="song-info">
+                        <h4>Until i found you</h4>
+                        <p>Stephen Sanchez</p><br>
+                        <p>Alasan : Karena nda percaya ma lagi sama pacaran, until i found youu</p>
+                        <audio controls loop>
+                            <source src="UntilFound.mp3" type="audio/mpeg" />
+                        </audio>
+                    </div>
+                </div>
+                <div class="song">
+                    <div class="song-icon"><img src="ilove.png" height="130"></div>
+                    <div class="song-info">
+                        <h4>I love you 3000</h4>
+                        <p>Stephanie Poetri</p><br>
+                        <p>Alasan : Pertama kali ku di nyanyikan sama cewe pas nu nyanyikan ka ini</p>
+                        <audio controls loop>
+                            <source src="iloveyou3000.mp3" type="audio/mpeg" />
+                        </audio>
+                    </div>
+                </div>
+                <div class="song">
+                    <div class="song-icon"><img src="doyou.webp" height="130" width="130"></div>
+                    <div class="song-info">
+                        <h4>Do you think they could love me</h4>
+                        <p>Yung Kai</p><br>
+                        <p>Alasan : Makna lagunya anjir, kaya pas lagi ilfil ko ke saya</p>
+                        <audio controls loop>
+                            <source src="doyouloveme.mp3" type="audio/mpeg" />
+                        </audio>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notes Tab -->
+            <div class="tab-content" id="notes">
+                <h2>Tinggalkan Pesan Untuk Pasangan</h2>
+                <div class="note">
+                    <p>Semoga hubungan ta lancar yaa</p>
+                </div>
+                <div class="note">
+                    <p>Jangan sukaa ngomong kasar ya giaa</p>
+                </div>
+                <div class="note">
+                    <p>Kalo putput ada salah bilang yaa</p>
+                </div>
+                <div class="note">
+                    <p>Kloo makan jangan lambat, nanti asam lambung km naik</p>
+                </div>
+                <div class="note">
+                    <h3>Boleh kok ditambah pesan buat saya</h3>
+                </div>
+
+                <!--BUAT NAMBAH PESAN-->
+                <div class="note">
+                    <p> </p>
+                </div>
+                <div class="note">
+                    <p> </p>
+                </div>
+                <div class="note">
+                    <p> </p>
+                </div>
+                <div class="note">
+                    <p> </p>
+                </div>
+            </div>
+            
+            <!-- Gallery Tab -->
+            <div class="tab-content" id="gallery">
+                <audio id="bg-music" loop>
+                    <source src="Blue.mp3" type="audio/mpeg" />
+                </audio>
+                <h2>Our Photos</h2>
+                <div class="gallery">
+                    <div class="gallery-item">
+                        <img src="Generatorrblx.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="GiaPipi.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="PutputSigma.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Gialucu.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="mirrorumah.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Harijadi.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Kecik.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="KacamataPutput.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Giaboneka.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="putputsenin.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="GiaSenin.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="depansmp.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Kopken.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="giawle.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="putwle.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="juara.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Giapalingimut.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="Gradu.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="robloxlobby.jpg" height="200">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="PutputAtas.jpg">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="GiaAtas.jpg">
+                    </div>
+                    
+                </div>
+            </div>
+
+
+            <!--Buat Nambah Musik BG Saat Di Tab Galery-->
+            <script>
+                // Tunggu interaksi pertama pengguna (klik di mana saja)
+                document.addEventListener('focus', function() {
+                    const music = document.getElementById('bg-music');
+                    music.play()
+                        .then(() => console.log("Musik mulai 🎵"))
+                        .catch(err => console.log("Gagal memutar musik:", err));
+                }, { once: true });
+                const tabs = document.querySelectorAll('.tab');
+                const tabContents = document.querySelectorAll('.tab-content');
+                const bgMusic = document.getElementById('bg-music'); // ambil audio di gallery
+
+                tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Tampilkan konten sesuai tab
+                    tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === targetTab) {
+                        content.classList.add('active');
+                    }
+                    });
+
+                    // Kontrol musik sesuai tab
+                    if (targetTab === 'gallery') {
+                    bgMusic.play().catch(() => {
+                        console.log('Klik dulu halaman agar musik bisa main 🎵');
+                    });
+                    } else {
+                    bgMusic.pause();
+                    bgMusic.currentTime = 0; // reset ke awal biar ulang dari awal kalau balik lagi
+                    }
+                });
+                });
+
+            </script>
+        </div>
+    </div>
+    
+    <!-- Decorative elements -->
+    <div class="heart" style="top: 10%; left: 5%;">💞</div>
+    <div class="heart" style="top: 20%; right: 10%;">💞</div>
+    <div class="heart" style="bottom: 15%; left: 15%;">💞</div>
+    <div class="teddy-bear" style="top: 30%; left: 10%;">🧸</div>
+    <div class="teddy-bear" style="bottom: 10%; right: 5%;">🧸</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Password check
+            const passwordModal = document.getElementById('passwordModal');
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            const mainContent = document.getElementById('mainContent');
+            const passwordInput = document.getElementById('passwordInput');
+            const submitPassword = document.getElementById('submitPassword');
+            
+            submitPassword.addEventListener('click', function() {
+                if (passwordInput.value.toLowerCase() === '') { //nama password___________________________________
+                    passwordModal.style.opacity = '0';
+                    setTimeout(() => {
+                        passwordModal.style.display = 'none';
+                        welcomeScreen.style.display = 'flex';
+                        
+                        setTimeout(() => {
+                            welcomeScreen.style.opacity = '0';
+                            setTimeout(() => {
+                                welcomeScreen.style.display = 'none';
+                                mainContent.style.display = 'block';
+                            }, 800);
+                        }, 2500);
+                    }, 500);
+                } else {
+                    passwordInput.value = '';
+                    passwordInput.placeholder = 'Kode rahasianyaa salah...';
+                    passwordInput.style.borderColor = '#ff4d4d';
+                    setTimeout(() => {
+                        passwordInput.style.borderColor = '#ffb7c5';
+                        passwordInput.placeholder = 'Kata spesial ta berdua...';
+                    }, 1500);
+                }
+            });
+            
+            // Allow Enter key to submit password
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    submitPassword.click();
+                }
+            });
+            
+            // Tab switching
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === targetTab) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Expandable love letter
+            const loveLetter = document.getElementById('loveLetter');
+            loveLetter.addEventListener('click', function() {
+                this.classList.toggle('expanded');
+            });
+            
+            // Add floating decorative elements
+            function addFloatingElements() {
+                for (let i = 0; i < 15; i++) {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerHTML = '❤️';
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.top = Math.random() * 100 + '%';
+                    heart.style.animationDelay = Math.random() * 5 + 's';
+                    document.body.appendChild(heart);
+                }
+                
+                for (let i = 0; i < 5; i++) {
+                    const teddy = document.createElement('div');
+                    teddy.classList.add('teddy-bear');
+                    teddy.innerHTML = '🧸';
+                    teddy.style.left = Math.random() * 100 + '%';
+                    teddy.style.top = Math.random() * 100 + '%';
+                    teddy.style.animationDelay = Math.random() * 5 + 's';
+                    document.body.appendChild(teddy);
+                }
+            }
+            
+            addFloatingElements();
+        });
+    </script>
+</body>
+</html>
